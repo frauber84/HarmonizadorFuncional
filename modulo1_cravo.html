@@ -1,0 +1,369 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset='utf-8'>
+	<meta http-equiv="content-type" content="text/html" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="icon" href="favicon.ico" type="image/x-icon"/>
+	<title>Harmonizador Interativo</title>
+	<link href="abcjs-audio.css" media="all" rel="stylesheet" type="text/css" />
+	
+	<script src="abcjs-basic-min.js" type="text/javascript"></script>
+
+	
+	<style>
+		.abcjs-inline-audio {
+			max-width: 500px;
+		}
+
+		.abcjs-highlight {
+			fill: #0a9ecc;
+		}
+		.abcjs-cursor {
+			stroke: red;
+		}
+
+		.abcjs-annotation {
+			stroke: red;
+			fill: darkred;
+		}
+
+    .abcjs-note:hover {    	
+    	fill: blue;    	
+    }
+
+		.abcjs-chord {
+			stroke:  gray;
+			fill:  gray;
+
+		}
+
+	</style>
+</head>
+<body>
+
+<p>	
+	<style>
+.slidecontainer {
+  width: 100%; /* Width of the outside container */
+}
+
+/* Slider para BPM */
+.slider {
+  -webkit-appearance: none;  /* Override default CSS styles */
+  appearance: none;    
+  width: 25px; /* Full-width */
+  height: 100px; /* Specified height */
+  background: #d3d3d3; /* Grey background */
+  outline: none; /* Remove outline */
+  opacity: 0.7; /* Set transparency (for mouse-over effects on hover) */
+  -webkit-transition: .2s; /* 0.2 seconds transition on hover */
+  -webkit-appearance: slider-vertical;
+  transition: opacity .2s;
+}
+
+/* Mouse-over do slider */
+.slider:hover {
+  opacity: 1; /* Fully shown on mouse-over */
+}
+
+/* The slider handle (use -webkit- (Chrome, Opera, Safari, Edge) and -moz- (Firefox) to override default look) */
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none; /* Override default look */
+  appearance: none;
+  width: 25px; /* Set a specific slider handle width */
+  height: 25px; /* Slider handle height */
+  background: #04AA6D; /* Green background */
+  cursor: pointer; /* Cursor on hover */
+}
+
+.slider::-moz-range-thumb {
+  width: 25px; /* Set a specific slider handle width */
+  height: 25px; /* Slider handle height */
+  background: #04AA6D; /* Green background */
+  cursor: pointer; /* Cursor on hover */
+}
+</style>
+  
+</p>
+
+<div id="partitura"></div>
+<div id="audio"></div>
+
+<style>
+
+.abcjs-note_selected {
+			fill: #0a9ecc;
+			color: red;
+		}		
+
+.abcjs-title {
+			fill: red;
+			color: red;
+			font-size: 40px;
+		}		
+
+</style>
+
+<script type="text/javascript">
+
+// Array de acordes:  abcjs-mm# = compasso,  abcjs-n0 = ordem do elemento
+
+var bpm = '72';
+
+var harm = [
+'"C""_T"',
+'"C/E""_T""_3"',
+'"C/G""_T""_5"',
+'"Am/C""_T6"',
+'"Am7/C""_T6/5"',
+'"Am""_Tr"',
+'"Em""_Ta"',
+'"F""_S"',
+'"F/A""_S""_3"',
+'"F/C""_S""_5"',
+'"Dm/F""_S6"',
+'"Dm7/F""_S6/5"',
+'"Dm""_Sr"',
+'"Am""_Sa"',
+'"G""_D"',
+'"G/B""_D""_3"',
+'"G/D""_D""_5"',
+'"Em/G""_D6"',
+'"C/G""_D6/4"',
+'"Gsus4""_D4"',
+'"Em7/G""_D6/5"',
+'"Em""_Dr"',
+'"Bm""_Da"',
+''  // sem acorde
+];
+
+var ac = [
+	[ '', '', '', '', '', '', ''],  // mm0
+	[ harm[0], '', '', '', '', '', ''],  // mm1
+	[ '', '', '', '', '', '', ''],  // mm2
+	[ '', '', '', '', '', '', ''],  // mm3
+	[ '', '', '', '', '', '', ''],  // mm4
+	[ '', '', '', '', '', '', ''],  // mm5
+	[ '', '', '', '', '', '', ''],  // mm6
+	[ '', '', '', '', '', '', ''],  // mm7
+	[ '', '', '', '', '', '', ''],  // mm8
+];
+
+var abc = ''
+
+function AtualizarNotacao()
+{
+	// console.log("Acordes " + ac)
+
+	cravo = 'T: O Cravo Brigou Com a Rosa\n' +
+	'M: 3/4\n' +
+	'L: 1/8\n' +
+	'K: Cmaj\n' +
+	'Q: C1=' +	
+	 bpm + '\n' +	 
+	'G2 | ' + 
+	ac[1][0] + 	
+	'G2 ' + ac[1][1] + 'E' + ac[1][2] + 'c' + ac[1][3] + 'B' + ac[1][4] + 'A | ' + 
+	ac[2][0] + 	
+	'G2 ' + ac[2][1] + 'F2 ' + ac[2][2] + 'A2| ' + 
+	ac[3][0] + 	
+	'A2 ' + ac[3][1] + 'F' + ac[3][2] + 'c' + ac[3][3] + 'B' + ac[3][4] + 'A| ' + 	
+	ac[4][0] + 	
+	'G4 ' + ac[4][1] + 'G2 | \n' + 
+	ac[5][0] + 	
+	'c2 ' + ac[5][1] + 'c' + ac[5][2] + 'c' + ac[5][3] + 'd' + ac[5][4] + 'c | ' + 
+	ac[6][0] + 	
+	'B2 ' + ac[6][1] + 'A2 ' + ac[6][2] + 'A2 | ' + 
+	ac[7][0] + 	
+	'G2 ' + ac[7][1] + 'B' + ac[7][2] + 'A' + ac[7][3] + 'F' + ac[7][4] + 'D | ' + 
+	ac[8][0] + 	
+	 'C8 ||';
+
+    // http://abcnotation.com/examples
+	 abc = 'T: A Moda da Carranquinha\n' +
+	'M: 2/4\n' +
+	'L: 1/8\n' +
+	'K: Cmaj\n' +
+	'%%MIDI voice instrument=8 \n' +
+	'Q: C1=' +	
+	 bpm + '\n' +	 
+	'G | ' + 
+	ac[1][0] + 	
+	'c/2' + ac[1][1] + 'c' + ac[1][2] + 'c/2 ' + ac[1][3] + 'c' + ac[1][4] + 'G | ' +
+	ac[2][0] + 
+	'B' + ac[2][1] + 'A- ' + ac[2][2] + 'A' + ac[2][3] + 'G|' + 
+	ac[3][0] + 
+	'B/2' + ac[3][1] + 'B' + ac[3][2] + 'B/2 ' + ac[3][3] + 'B' + ac[3][4] + 'F | ' + 
+	ac[4][0] + 
+	'A' + ac[4][1] + 'G- ' + ac[4][2] + 'G' + ac[4][3] + 'G|\n' + 
+	ac[5][0] + 
+	'A/2' + ac[5][1] + 'A' + ac[5][2] + 'A/2 ' + ac[5][3] +'A' + ac[5][4] + 'E | ' + 
+	ac[6][0] + 
+	'G' + ac[6][1] +  'F ' + ac[6][2] + 'B' + ac[6][3] + 'A | '  +
+	ac[7][0] + 
+	'G/2' + ac[7][1] + 'G' + ac[7][2] + 'G/2 ' + ac[7][3] + 'A' + ac[7][4] + 'B | ' + 
+	ac[8][0] + 
+	 'c4 || ';	 
+
+	 abc=cravo
+
+};
+
+function clickListener(abcelem, tuneNumber, classes, analysis, drag, mouseEvent) {
+	console.log(abcelem);
+	//abcelem.chord[0].name = "D";
+	//abcelem.chord[1].name = "Tr";
+	ac[0] = '"D"';
+   //RenderizaPartitura('abc', { responsive: 'resize'});
+   RenderizaSemAudio('abc', { responsive: 'resize'});   
+	console.log(classes);
+	console.log(analysis)
+
+	classes = classes.replace('abcjs-note_selected', '');
+	abcjsmm = classes.indexOf("abcjs-mm");
+	abcjsn = classes.lastIndexOf("abcjs-n");
+	// console.log(nota);
+
+	// lê elemento
+	mm = classes[abcjsmm+8];
+	nota = classes[abcjsn+7];
+
+	ac[mm][nota] = MudaHarmonia(mm,nota);
+
+	//console.log(ac[mm][nota]); // ver se é undefined
+
+   //RenderizaPartitura('abc', { responsive: 'resize'});   
+
+   RenderizaPartitura('abc', { responsive: 'resize'});  
+
+var output = "abcelem: [Object]<br>tuneNumber: " + tuneNumber + "<br>classes: " + classes + "<br>analysis: " + JSON.stringify(analysis) + "<br>drag: " + JSON.stringify(drag) + "<br>mouseEvent: { clientX: " + mouseEvent.clientX + ", clientY: " + mouseEvent.clientY + " }";
+   console.log(output);
+
+}
+
+function MudaHarmonia(compasso, idnota)
+{
+    // confere ac[mm][nota]    
+    //console.log(ac[mm][nota]); // ver se é undefined
+
+
+    
+
+    let idx = undefined;
+    function achaIndice(elemento, indice)
+    {
+    	  if (elemento == ac[mm][nota])    	  	
+    	  {
+    	  	//console.log("Índice = " + indice);
+    	  	 idx = indice ;
+    	  }
+
+    };
+
+    harm.forEach(achaIndice);
+
+    //console.log("Índice = " + indice);
+
+    // se for indefined, index 0
+
+    // % 10 = lenght deh harm... +1
+    return harm[ (idx+1)%24 ];    
+};
+
+	function RenderizaSemAudio(musica, params)
+	{
+		if (!params) params = {};  // { responsive: 'resize' }
+		if (!musica) musica = 'abc';
+
+		params = { responsive: 'resize', add_classes: true ,format: { gchordfont: "Verdana 15" } , paddingleft:50, paddingright:50, paddingbottom: 20, clickListener: clickListener };
+
+
+		AtualizarNotacao();
+		var visualObj = ABCJS.renderAbc('partitura', abc, params)[0];
+
+	}
+	function RenderizaPartitura(musica, params) {
+		if (!params) params = {};  // { responsive: 'resize' }
+		if (!musica) musica = 'abc';
+
+		params = { responsive: 'resize', add_classes: true ,format: { gchordfont: "Verdana 15" } , paddingleft:50, paddingright:50, paddingbottom: 20, clickListener: clickListener };
+
+
+		AtualizarNotacao();
+		var visualObj = ABCJS.renderAbc('partitura', abc, params)[0];		
+
+		if (ABCJS.synth.supportsAudio()) {
+			
+			var synthControl = new ABCJS.synth.SynthController();
+			synthControl.load("#audio", null, {displayRestart: true, displayPlay: true, displayWarp:true, displayProgress: true});
+
+			// soundFontUrl
+			// "https://paulrosen.github.io/midi-js-soundfonts/abcjs/"
+
+			synthControl.setTune(visualObj, false);
+		} else {
+			document.querySelector("#audio").innerHTML = "<div class='audio-error'>Audio is not supported in this browser.</div>";
+		}
+	}
+
+// hack para simular um click e liberar o AudioContext no Chrome 
+if(typeof AudioContext != "undefined" || typeof webkitAudioContext != "undefined") {
+   var resumeAudio = function() {
+      if(typeof g_WebAudioContext == "undefined" || g_WebAudioContext == null) return;
+      if(g_WebAudioContext.state == "suspended") g_WebAudioContext.resume();
+      document.removeEventListener("click", resumeAudio);
+   };
+   document.addEventListener("click", resumeAudio);
+}
+
+resumeAudio()
+RenderizaPartitura('abc', { responsive: 'resize'});
+</script>
+
+<style>  
+.footer {  
+position:  footer;  
+left: 10px;  
+bottom: 5px;  
+right: 10px;   
+width: 95%;  
+background-color: white;  
+color: black;  
+text-align: center;  
+}  
+</style>  
+
+
+<!-- 
+
+<div class="slidecontainer">
+  <input type="range" min="40" max="180" step="4" value="72" class="slider" id="myRange">
+	</div>
+	<div id="bpm">
+	</div>
+
+
+<script>
+var slider = document.getElementById("myRange");
+var output = document.getElementById("bpm");
+output.innerHTML = slider.value; // Display the default slider value
+
+// Update the current slider value (each time you drag the slider handle)
+slider.oninput = function() {
+  output.innerHTML = this.value;
+  bpm = String(this.value);
+  RenderizaPartitura('abc', { responsive: 'resize'});
+}
+</script>
+
+-->
+
+<hr>
+
+<div class="footer">
+Desenvolvido por fernando.rauber@ufrgs.br usando a biblioteca <a href="http://abcjs.net">abcJS</a>
+</div>
+
+</body>
+</html>
